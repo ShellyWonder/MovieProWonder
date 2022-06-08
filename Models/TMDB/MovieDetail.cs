@@ -1,7 +1,7 @@
 ﻿namespace MovieProWonder.Models.TMDB
 {
-    #region Rootobject
-    public class Rootobject
+    #region MovieDetail
+    public class MovieDetail
     {
         public bool adult { get; set; }
         public string backdrop_path { get; set; }
