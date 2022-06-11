@@ -117,28 +117,36 @@ namespace MovieProWonder.Services
 
             return newMovie;
         }
-            #endregion
-            private async Task<byte[]> EncodeBackdropImageAsync(string path)
+        #endregion
+
+        #region EncodeBackdropImageAsync
+        private async Task<byte[]> EncodeBackdropImageAsync(string path)
             {
                 var backdropPath = $"{_appSettings.TMDBSettings.BaseImagePath}/{_appSettings.MovieProSettings.DefaultBackdropSize}/{path}";
                 return await _imageService.EncodeImageUrlAsync(backdropPath);
             }
+        #endregion
 
-            private string BuildImageType(string path)
+        #region BuildImageType
+        private string BuildImageType(string path)
             {
                 if (string.IsNullOrEmpty(path))
                     return path;
 
                 return $"image/{Path.GetExtension(path).TrimStart('.')}";
             }
+        #endregion
 
-            private async Task<byte[]> EncodePosterImageAsync(string path)
+        #region EncodePosterImageAsync
+        private async Task<byte[]> EncodePosterImageAsync(string path)
             {
                 var posterPath = $"{_appSettings.TMDBSettings.BaseImagePath}/{_appSettings.MovieProSettings.DefaultPosterSize}/{path}";
                 return await _imageService.EncodeImageUrlAsync(posterPath);
             }
+        #endregion
 
-            private MovieRating GetRating(Release_Dates dates)
+        #region GetRating
+        private MovieRating GetRating(Release_Dates dates)
             {
                 var movieRating = MovieRating.NR;
                 var certification = dates.results.FirstOrDefault(r => r.iso_3166_1 == "US");
@@ -152,14 +160,16 @@ namespace MovieProWonder.Services
                 }
                 return movieRating;
             }
-
-            private string BuildTrailerPath(Videos videos)
+        #endregion
+        #region BuildTrailerPath
+        private string BuildTrailerPath(Videos videos)
             {
                 var videoKey = videos.results.FirstOrDefault(r => r.type.ToLower().Trim() == "trailer" && r.key != "")?.key;
                 return string.IsNullOrEmpty(videoKey) ? videoKey : $"{_appSettings.TMDBSettings.BaseYouTubePath}{videoKey}";
             }
-
-            private string BuildCastImage(string profilePath)
+        #endregion
+        #region BuildCastImage
+        private string BuildCastImage(string profilePath)
             {
                 if (string.IsNullOrEmpty(profilePath))
                     return _appSettings.MovieProSettings.DefaultCastImage;
@@ -168,5 +178,6 @@ namespace MovieProWonder.Services
             }
 
         }
-    }
+    #endregion
+}
 
