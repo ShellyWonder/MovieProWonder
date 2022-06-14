@@ -1,0 +1,30 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using MovieProWonder.Services.Interfaces;
+
+namespace MovieProWonder.Controllers
+{
+    public class ActorsController : Controller
+    {
+        
+        private readonly IRemoteMovieService _tmdbMovieService;
+        private readonly IDataMappingService _mappingService;
+
+        #region constructor
+        public ActorsController(IRemoteMovieService tmdbMovieService,
+                                IDataMappingService mappingService)
+        {
+            _tmdbMovieService = tmdbMovieService;
+            _mappingService = mappingService;
+        }
+        #endregion
+        #region Details
+        public async Task<IActionResult> Detail(int id)
+        {
+            var actor = await _tmdbMovieService.ActorDetailAsync(id);
+            actor = _mappingService.MapActorDetail(actor);
+
+            return View(actor);
+        }
+        #endregion
+    }
+}
