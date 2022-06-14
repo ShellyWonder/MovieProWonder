@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MovieProWonder.Models;
 using MovieProWonder.Models.Database;
 
 namespace MovieProWonder.Data
@@ -12,5 +13,6 @@ namespace MovieProWonder.Data
         }
             public DbSet<Collection> Collection { get; set; }
             public DbSet<Movie> Movie { get; set; }
+            public DbSet<MovieCollection> MovieCollection { get; set; }
     }
 }
