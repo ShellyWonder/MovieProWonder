@@ -45,13 +45,10 @@ namespace MovieProWonder.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Description")] Collection collection)
         {
-            if (ModelState.IsValid)
-            {
                 _context.Add(collection);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(collection);
+                //new {id = collection.Id} = route value
+                return RedirectToAction("Index", "MovieCollections", new {id = collection.Id});
         }
         #endregion
 
@@ -59,7 +56,7 @@ namespace MovieProWonder.Controllers
         // GET: Collections/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Collection == null)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -87,6 +84,12 @@ namespace MovieProWonder.Controllers
             {
                 try
                 {
+                    //ensures collection is NOT "All" collection in DB; does not allow edit of DefaultCollection.Name ("All")
+                    if(collection.Name == _appSettings.MovieProSettings.DefaultCollection.Name)
+                    {
+                        return RedirectToAction("Index", "Collections");
+                    }
+
                     _context.Update(collection);
                     await _context.SaveChangesAsync();
                 }
@@ -110,13 +113,20 @@ namespace MovieProWonder.Controllers
         #region GET Delete
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Collection == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var collection = await _context.Collection
-                .FirstOrDefaultAsync(m => m.Id == id);
+                            .FirstOrDefaultAsync(m => m.Id == id);
+
+            //ensures collection is NOT "All" collection in DB; does not allow delete of DefaultCollection.Name ("All")
+            if (collection.Name == _appSettings.MovieProSettings.DefaultCollection.Name)
+            {
+                return RedirectToAction("Index", "Collections");
+            }
+           
             if (collection == null)
             {
                 return NotFound();
@@ -126,23 +136,17 @@ namespace MovieProWonder.Controllers
         }
         #endregion
 
-        #region POST Delete
+        #region POST Delete (confirmed)
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Collection == null)
-            {
-                return Problem("Entity set 'ApplicationDbContext.Collection'  is null.");
-            }
-            var collection = await _context.Collection.FindAsync(id);
-            if (collection != null)
-            {
-                _context.Collection.Remove(collection);
-            }
             
+            var collection = await _context.Collection.FindAsync(id);
+           
+                _context.Collection.Remove(collection!);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "MovieCollections");
         }
         #endregion
 
