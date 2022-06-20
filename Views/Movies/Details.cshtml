@@ -103,7 +103,7 @@
                 <div class="embed-responsive embed-responsive-16by9">
                     @{
                         //Isolating data as embed source
-                        var key = Model.TrailerUrl.Split("=").Last();
+                        var key = Model.TrailerUrl?.Split("=").Last();
                         var source = $"https://www.youtube.com/embed/{key}";
                     }
 

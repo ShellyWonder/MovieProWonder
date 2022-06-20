@@ -53,7 +53,7 @@ namespace MovieProWonder.Services
         #region MapMovieDetailAsync
         public async Task<Movie> MapMovieDetailAsync(MovieDetail movie)
         {
-            Movie newMovie = null;
+            Movie? newMovie = null;
 
             try
             {
@@ -74,12 +74,12 @@ namespace MovieProWonder.Services
                     VoteAverage = movie.vote_average
                 };
 
-                var castMembers = movie.credits.cast.OrderByDescending(c => c.popularity)
+                var castMembers = movie.credits?.cast.OrderByDescending(c => c.popularity)
                                                     .GroupBy(c => c.cast_id)
                                                     .Select(g => g.FirstOrDefault())
                                                     .Take(20).ToList();
 
-                castMembers.ForEach(member =>
+                castMembers?.ForEach(member =>
                 {
                     newMovie.Cast.Add(new MovieCast()
                     {
@@ -91,12 +91,12 @@ namespace MovieProWonder.Services
                     });
                 });
 
-                var crewMembers = movie.credits.crew.OrderByDescending(c => c.popularity)
+                var crewMembers = movie.credits?.crew.OrderByDescending(c => c.popularity)
                                                     .GroupBy(c => c.id)
                                                     .Select(g => g.First())
                                                     .Take(20).ToList();
 
-                crewMembers.ForEach(member =>
+                crewMembers?.ForEach(member =>
                 {
                     newMovie.Crew.Add(new MovieCrew()
                     {
@@ -115,7 +115,7 @@ namespace MovieProWonder.Services
 
             }
 
-            return newMovie;
+            return newMovie!;
         }
         #endregion
 
@@ -148,9 +148,10 @@ namespace MovieProWonder.Services
         #region GetRating
         private MovieRating GetRating(Release_Dates dates)
             {
+            
                 var movieRating = MovieRating.NR;
-                var certification = dates.results.FirstOrDefault(r => r.iso_3166_1 == "US");
-                if (certification is not null)
+                var certification = dates?.results.FirstOrDefault(r => r.iso_3166_1 == "US");
+                if (certification != null)
                 {
                     var apiRating = certification.release_dates.FirstOrDefault(c => c.certification != "")?.certification.Replace("-", "");
                     if (!string.IsNullOrEmpty(apiRating))
@@ -162,9 +163,9 @@ namespace MovieProWonder.Services
             }
         #endregion
         #region BuildTrailerPath
-        private string BuildTrailerPath(Videos videos)
+        private string? BuildTrailerPath(Videos videos)
             {
-                var videoKey = videos.results.FirstOrDefault(r => r.type.ToLower().Trim() == "trailer" && r.key != "")?.key;
+                var videoKey = videos?.results.FirstOrDefault(r => r.type.ToLower().Trim() == "trailer" && r.key != "")?.key;
                 return string.IsNullOrEmpty(videoKey) ? videoKey : $"{_appSettings.TMDBSettings.BaseYouTubePath}{videoKey}";
             }
         #endregion
